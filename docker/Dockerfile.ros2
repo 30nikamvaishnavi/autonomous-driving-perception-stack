@@ -1,0 +1,14 @@
+# ROS2 Humble + adpstack (perception/control nodes). CARLA server runs separately (carlasim/carla:0.9.15).
+FROM ros:humble-ros-base
+RUN apt-get update && apt-get install -y python3-pip python3-colcon-common-extensions ros-humble-rqt-image-view \
+    libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY pyproject.toml README.md ./
+COPY src ./src
+COPY configs ./configs
+RUN pip3 install --no-cache-dir "numpy<2" opencv-python-headless scipy pyyaml matplotlib onnxruntime-gpu \
+    carla==0.9.15 wandb && pip3 install --no-cache-dir -e . --no-deps
+COPY ros2_ws ./ros2_ws
+RUN . /opt/ros/humble/setup.sh && cd ros2_ws && colcon build --symlink-install
+ENV ADP_WS=/app/ros2_ws
+CMD ["bash", "-lc", "source /opt/ros/humble/setup.bash && source /app/ros2_ws/install/setup.bash && ros2 launch adp_bringup full_stack.launch.py"]

@@ -1,0 +1,22 @@
+{
+  "stationary_obstacle|aeb=False": {
+    "collision_rate": 1.0,
+    "mean_min_gap_m": 0.0,
+    "mean_impact_speed_mps": 7.799768027882597
+  },
+  "stationary_obstacle|aeb=True": {
+    "collision_rate": 0.0,
+    "mean_min_gap_m": 4.719773706137724,
+    "mean_impact_speed_mps": 0.0
+  },
+  "slow_lead_5mps|aeb=False": {
+    "collision_rate": 1.0,
+    "mean_min_gap_m": 0.0,
+    "mean_impact_speed_mps": 7.912296290658989
+  },
+  "slow_lead_5mps|aeb=True": {
+    "collision_rate": 0.0,
+    "mean_min_gap_m": 10.322683582165991,
+    "mean_impact_speed_mps": 0.0
+  }
+}

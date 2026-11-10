@@ -1,0 +1,21 @@
+# Run on the GPU VM:  docker compose -f docker/docker-compose.yml up
+# Requires nvidia-container-toolkit.
+services:
+  carla:
+    image: carlasim/carla:0.9.15
+    command: ./CarlaUE4.sh -RenderOffScreen -nosound -quality-level=Low
+    runtime: nvidia
+    environment: [NVIDIA_VISIBLE_DEVICES=all]
+    ports: ["2000-2002:2000-2002"]
+    network_mode: host
+  stack:
+    build: { context: .., dockerfile: docker/Dockerfile.ros2 }
+    runtime: nvidia
+    network_mode: host
+    depends_on: [carla]
+    environment: [NVIDIA_VISIBLE_DEVICES=all, WANDB_API_KEY]
+    volumes: ["../models:/app/models", "../outputs:/app/outputs"]
+    command: >
+      bash -lc "source /opt/ros/humble/setup.bash && source /app/ros2_ws/install/setup.bash &&
+      ros2 launch adp_bringup full_stack.launch.py host:=localhost scenario:=${SCENARIO:-pedestrian_crossing}
+      weights:=/app/models/best.onnx"
