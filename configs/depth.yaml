@@ -1,0 +1,7 @@
+model: MiDaS_small
+input_size: 256
+device: auto
+camera: {fx: 960.0, fy: 960.0, cx: 640.0, cy: 360.0, height_m: 1.5}
+class_heights_m: {car: 1.5, truck: 3.2, bus: 3.2, person: 1.7, rider: 1.7, bicycle: 1.6, motorcycle: 1.4}
+sample_region: lower_half
+scale_shift: {scale: 1.0, shift: 0.0}

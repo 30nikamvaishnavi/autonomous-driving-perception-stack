@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adpstack"
+version = "1.0.0"
+description = "Autonomous Driving Perception Stack: detection, tracking, lanes, depth, CARLA + ROS2, ONNX/TensorRT"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.24", "opencv-python>=4.8", "scipy>=1.10", "pyyaml>=6.0",
+  "matplotlib>=3.7", "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+ml = ["torch>=2.1", "torchvision", "ultralytics>=8.3", "timm", "segmentation-models-pytorch", "wandb"]
+export = ["onnx", "onnxsim", "onnxruntime"]
+dev = ["pytest", "pytest-cov", "ruff", "mypy", "pre-commit"]
+
+[project.scripts]
+adp = "adpstack.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501", "B008"]

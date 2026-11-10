@@ -1,0 +1,8 @@
+host: localhost
+port: 2000
+town: Town03
+fps: 20
+camera: {width: 1280, height: 720, fov: 90, x: 1.5, z: 1.5}
+weather: ClearNoon           # ClearNoon | WetCloudyNoon | HardRainNight | ClearNight
+traffic: {vehicles: 20, pedestrians: 20}
+record: {frames: 2000, every_n: 5, out: data/carla}

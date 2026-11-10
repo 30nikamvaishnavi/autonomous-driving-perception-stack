@@ -1,0 +1,13 @@
+model: yolo11n.pt          # or yolov8s.pt
+data: data/bdd100k/yolo/dataset.yaml
+epochs: 50
+imgsz: 640
+batch: 16
+device: auto               # auto | cpu | 0
+workers: 4
+project: runs/detect
+name: bdd100k_yolo11n
+patience: 15
+cos_lr: true
+augment: {mosaic: 1.0, mixup: 0.1, hsv_h: 0.015, hsv_s: 0.7, hsv_v: 0.4, fliplr: 0.5, scale: 0.5}
+wandb: {enabled: true, project: adpstack}

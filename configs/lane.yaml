@@ -1,0 +1,10 @@
+roi_top_frac: 0.58
+src_pts_frac: [[0.43, 0.65], [0.57, 0.65], [0.90, 0.95], [0.10, 0.95]]
+warp_size: [640, 720]
+xm_per_pix: 0.0053
+ym_per_pix: 0.042
+nwindows: 9
+margin: 70
+minpix: 50
+smooth_alpha: 0.8
+seg: {encoder: mobilenet_v2, classes: 3, imgsz: [384, 640], weights: runs/seg/best.pt}

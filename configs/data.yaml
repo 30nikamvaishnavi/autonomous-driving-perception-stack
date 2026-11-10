@@ -1,0 +1,4 @@
+root: data/bdd100k
+yolo_dir: data/bdd100k/yolo
+classes: [car, truck, bus, motorcycle, bicycle, person, rider, traffic light, traffic sign]
+subset: 10000

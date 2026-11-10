@@ -1,0 +1,3 @@
+aeb: {ttc_brake: 1.8, ttc_warn: 3.0, min_dist_m: 4.0, max_brake: 1.0}
+acc: {target_speed_mps: 8.0, time_gap_s: 1.8, kp: 0.5, ki: 0.05, kd: 0.1}
+lka: {k: 1.2, softening: 1.0, max_steer: 0.7}
