@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .venv/
 kaggle.json
+.vscode/
 data/*
 !data/README.md
 outputs/
