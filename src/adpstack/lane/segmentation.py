@@ -13,6 +13,7 @@ import numpy as np
 
 from adpstack.utils.config import load_config, resolve_device
 from adpstack.utils.logging import get_logger
+from adpstack.utils.seed import seed_everything
 
 log = get_logger(__name__)
 MEAN, STD = np.array([0.485, 0.456, 0.406]), np.array([0.229, 0.224, 0.225])
@@ -73,6 +74,7 @@ class SegLaneDetector:
 
 def train(images: Path, masks: Path, cfg: dict, epochs: int, batch: int, out: Path,
           wandb_on: bool = True) -> None:  # pragma: no cover - needs GPU + data
+    seed_everything(int(cfg.get("seed", 42)))
     import torch
     from torch.utils.data import DataLoader, Dataset
 

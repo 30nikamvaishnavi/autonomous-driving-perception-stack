@@ -6,6 +6,7 @@ import os
 
 from adpstack.utils.config import load_config, resolve_device
 from adpstack.utils.logging import get_logger
+from adpstack.utils.seed import seed_everything
 
 log = get_logger(__name__)
 
@@ -18,7 +19,7 @@ def build_train_args(cfg: dict) -> dict:
         data=cfg["data"], epochs=cfg["epochs"], imgsz=cfg["imgsz"], batch=cfg["batch"],
         device=0 if dev == "cuda" else dev, workers=cfg.get("workers", 4),
         project=cfg["project"], name=cfg["name"], patience=cfg.get("patience", 15),
-        cos_lr=cfg.get("cos_lr", True), plots=True, **aug,
+        cos_lr=cfg.get("cos_lr", True), seed=cfg.get("seed", 42), plots=True, **aug,
     )
 
 
@@ -29,6 +30,7 @@ def main() -> None:
     ap.add_argument("--resume", action="store_true")
     a = ap.parse_args()
     cfg = load_config(a.config, a.set)
+    seed_everything(int(cfg.get("seed", 42)))
     from ultralytics import YOLO, settings
 
     wb = cfg.get("wandb", {})
