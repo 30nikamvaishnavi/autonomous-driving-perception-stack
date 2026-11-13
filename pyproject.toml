@@ -17,7 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 ml = ["torch>=2.1", "torchvision", "ultralytics>=8.3", "timm", "segmentation-models-pytorch", "wandb"]
 export = ["onnx", "onnxsim", "onnxruntime"]
-dev = ["pytest", "pytest-cov", "ruff", "mypy", "pre-commit"]
+dev = ["pytest", "pytest-cov", "ruff", "mypy", "pre-commit", "nbformat"]
 
 [project.scripts]
 adp = "adpstack.cli:main"
