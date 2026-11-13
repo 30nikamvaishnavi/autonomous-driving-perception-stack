@@ -9,7 +9,7 @@
 
 ## 1. Laptop (Windows 11)
 ```powershell
-git clone https://github.com/<you>/adpstack.git; cd adpstack
+git clone https://github.com/30nikamvaishnavi/autonomous-driving-perception-stack.git; cd autonomous-driving-perception-stack
 py -3.11 -m venv .venv; .\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"            # lightweight: numpy, opencv, scipy
 pytest                             # CPU tests, no data needed
@@ -48,7 +48,7 @@ docker run -d --name carla --gpus all --net=host carlasim/carla:0.9.15 ./CarlaUE
 
 # ROS2 Humble
 sudo apt update && sudo apt install -y ros-humble-ros-base ros-humble-rqt-image-view python3-colcon-common-extensions python3-pip
-git clone https://github.com/<you>/adpstack.git && cd adpstack
+git clone https://github.com/30nikamvaishnavi/autonomous-driving-perception-stack.git && cd autonomous-driving-perception-stack
 pip3 install "numpy<2" opencv-python-headless scipy pyyaml matplotlib onnxruntime-gpu wandb carla==0.9.15
 pip3 install -e . --no-deps
 source /opt/ros/humble/setup.bash && cd ros2_ws && colcon build --symlink-install && cd ..

@@ -1,6 +1,6 @@
 # Autonomous Driving Perception Stack
 
-[![CI](https://github.com/<you>/adpstack/actions/workflows/ci.yml/badge.svg)](https://github.com/<you>/adpstack/actions)
+[![CI](https://github.com/30nikamvaishnavi/autonomous-driving-perception-stack/actions/workflows/ci.yml/badge.svg)](https://github.com/30nikamvaishnavi/autonomous-driving-perception-stack/actions)
 
 A vision pipeline that **detects** vehicles / pedestrians / cyclists / traffic lights, **tracks** them (ByteTrack),
 finds **lanes** two ways (classical OpenCV vs a U-Net segmentation model), estimates **distance** (MiDaS + pinhole fusion),
