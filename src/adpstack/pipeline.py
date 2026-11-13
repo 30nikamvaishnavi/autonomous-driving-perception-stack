@@ -1,8 +1,9 @@
 """End-to-end perception pipeline: detect -> track -> lane -> depth -> distance/TTC -> risk."""
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 

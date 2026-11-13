@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
+kaggle.json
 data/*
 !data/README.md
 outputs/

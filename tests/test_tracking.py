@@ -45,7 +45,7 @@ def test_low_conf_recovered_and_occlusion_buffer():
         tr.update(b, np.array([0.9, 0.9]), np.array([0, 0]))
     out = tr.update(seq[6], np.array([0.3, 0.9]), np.array([0, 0]))   # low-conf second stage
     assert sorted(t.id for t in out) == [1, 2]
-    for b in seq[7:9]:                                                 # fully missing detections
+    for _ in seq[7:9]:                                                 # fully missing detections
         tr.update(np.zeros((0, 4)), np.zeros(0), np.zeros(0))
     out = tr.update(seq[9], np.array([0.9, 0.9]), np.array([0, 0]))
     assert sorted(t.id for t in out) == [1, 2]

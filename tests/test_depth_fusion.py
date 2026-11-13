@@ -1,9 +1,14 @@
 import numpy as np
 
 from adpstack.control.aeb_controller import DrivingController, stanley_steer
-from adpstack.depth.calibrate_scale import (depth_metrics, fit_scale_shift, midas_to_metric, pinhole_distance)
+from adpstack.depth.calibrate_scale import (
+    depth_metrics,
+    fit_scale_shift,
+    midas_to_metric,
+    pinhole_distance,
+)
 from adpstack.fusion.distance_estimator import DistanceEstimator, sample_box_depth
-from adpstack.fusion.risk import RiskLevel, Risk, classify, scene_risk
+from adpstack.fusion.risk import Risk, RiskLevel, classify, scene_risk
 from adpstack.fusion.ttc import DistanceKalman, TTCEstimator, time_to_collision
 from adpstack.utils.config import load_config
 
