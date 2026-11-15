@@ -37,6 +37,23 @@ def test_frame_to_lines_filters_classes_and_degenerate():
     assert lines[0].startswith("0 ") and lines[1].startswith("5 ")
 
 
+def test_frame_to_lines_normalizes_category_aliases_and_skips_unknown():
+    frame = {
+        "labels": [
+            {"category": "bike", "box2d": {"x1": 0, "y1": 0, "x2": 10, "y2": 10}},
+            {"category": "motor", "box2d": {"x1": 0, "y1": 0, "x2": 10, "y2": 10}},
+            {"category": "lane", "box2d": {"x1": 0, "y1": 0, "x2": 10, "y2": 10}},
+        ]
+    }
+
+    lines = frame_to_yolo_lines(frame)
+
+    assert [line.split()[0] for line in lines] == ["4", "3"]
+    stats = compute_stats([frame])
+    assert stats["class_counts"]["bicycle"] == 1
+    assert stats["class_counts"]["motorcycle"] == 1
+
+
 def test_convert_split(tmp_path):
     root = tmp_path / "bdd"
     (root / "images").mkdir(parents=True)

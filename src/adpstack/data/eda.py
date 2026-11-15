@@ -12,6 +12,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
+from adpstack.data.bdd100k_to_yolo import CATEGORY_ALIASES  # noqa: E402
 from adpstack.utils.logging import get_logger  # noqa: E402
 
 log = get_logger(__name__)
@@ -30,7 +31,7 @@ def compute_stats(frames: list[dict]) -> dict:
         weather[a.get("weather", "unknown")] += 1
         scene[a.get("scene", "unknown")] += 1
         for lab in labs:
-            c = lab["category"]
+            c = CATEGORY_ALIASES.get(lab["category"], lab["category"])
             b = lab["box2d"]
             area = max(0.0, b["x2"] - b["x1"]) * max(0.0, b["y2"] - b["y1"])
             cls[c] += 1

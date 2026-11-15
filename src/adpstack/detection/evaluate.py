@@ -6,7 +6,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from adpstack.data.bdd100k_to_yolo import CLASSES
+from adpstack.data.bdd100k_to_yolo import CATEGORY_ALIASES, CLASS_TO_ID, CLASSES
 from adpstack.utils.logging import get_logger
 
 log = get_logger(__name__)
@@ -20,8 +20,12 @@ def split_by_attribute(frames: list[dict], images_dir: Path) -> dict[str, list[s
         a = fr.get("attributes", {})
         groups["night" if a.get("timeofday") == "night" else "day"].append(p)
         groups["rainy" if a.get("weather") in ("rainy", "snowy") else "clear"].append(p)
-        areas = [(b["x2"] - b["x1"]) * (b["y2"] - b["y1"]) for lab in fr.get("labels") or []
-                 if (b := lab.get("box2d"))]
+        areas = [
+            (b["x2"] - b["x1"]) * (b["y2"] - b["y1"])
+            for lab in fr.get("labels") or []
+            if CATEGORY_ALIASES.get(lab.get("category"), lab.get("category")) in CLASS_TO_ID
+            if (b := lab.get("box2d"))
+        ]
         if areas and sum(x < 32**2 for x in areas) / len(areas) > 0.6:
             groups["small_objects"].append(p)
     return groups

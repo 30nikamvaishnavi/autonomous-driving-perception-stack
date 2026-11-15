@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+from pathlib import Path
 
 from adpstack.utils.config import load_config, resolve_device
 from adpstack.utils.logging import get_logger
@@ -19,7 +20,8 @@ def build_train_args(cfg: dict) -> dict:
         data=cfg["data"], epochs=cfg["epochs"], imgsz=cfg["imgsz"], batch=cfg["batch"],
         device=0 if dev == "cuda" else dev, workers=cfg.get("workers", 4),
         project=cfg["project"], name=cfg["name"], patience=cfg.get("patience", 15),
-        cos_lr=cfg.get("cos_lr", True), seed=cfg.get("seed", 42), plots=True, **aug,
+        cos_lr=cfg.get("cos_lr", True), seed=cfg.get("seed", 42), plots=True,
+        save_period=cfg.get("save_period", -1), **aug,
     )
 
 
@@ -42,6 +44,20 @@ def main() -> None:
     model = YOLO(cfg["model"])
     args = build_train_args(cfg)
     log.info("training with %s", args)
+
+    if wb.get("enabled", True) and os.environ.get("WANDB_MODE") != "offline":
+        url_path = Path(cfg["project"]) / cfg["name"] / "wandb_run_url.txt"
+
+        def save_wandb_url(_trainer) -> None:
+            import wandb
+
+            if wandb.run is not None:
+                url_path.parent.mkdir(parents=True, exist_ok=True)
+                url_path.write_text(wandb.run.url, encoding="utf-8")
+                log.info("W&B run URL: %s", wandb.run.url)
+
+        model.add_callback("on_train_start", save_wandb_url)
+
     model.train(resume=a.resume, **args) if a.resume else model.train(**args)
     log.info("best weights: %s/%s/weights/best.pt", cfg["project"], cfg["name"])
 

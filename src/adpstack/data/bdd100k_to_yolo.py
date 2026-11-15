@@ -13,6 +13,7 @@ log = get_logger(__name__)
 CLASSES = ["car", "truck", "bus", "motorcycle", "bicycle", "person", "rider",
            "traffic light", "traffic sign"]
 CLASS_TO_ID = {c: i for i, c in enumerate(CLASSES)}
+CATEGORY_ALIASES = {"bike": "bicycle", "motor": "motorcycle"}
 IMG_W, IMG_H = 1280, 720
 
 
@@ -32,6 +33,7 @@ def frame_to_yolo_lines(frame: dict, w: int = IMG_W, h: int = IMG_H) -> list[str
     lines = []
     for lab in frame.get("labels") or []:
         cat = lab.get("category")
+        cat = CATEGORY_ALIASES.get(cat, cat)
         box = lab.get("box2d")
         if cat not in CLASS_TO_ID or not box:
             continue
