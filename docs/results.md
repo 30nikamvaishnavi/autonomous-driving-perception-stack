@@ -38,16 +38,37 @@ oversampling. These are proposed experiments, not measured improvements.
 | Small objects (<32^2 px) | TODO |
 | Night / rainy share | TODO |
 
-## 3. Detection (Kaggle T4) - full run in progress
-Measured training setup: YOLO11n, imgsz 640, batch 16; one epoch took 0.031 hours.
-The 50-epoch evaluation is pending. No smoke-test metrics are reported here as final results.
+## 3. Detection (Kaggle Tesla T4)
+Measured setup: YOLO11n, imgsz 640, batch 16, 50 epochs; 10,000 training and 2,000
+validation images from the private BDD100K subset.
 
-| Model | imgsz | mAP50 | mAP50-95 | Precision | Recall |
-|---|---|---|---|---|---|
-| YOLO11n | 640 | TODO | TODO | TODO | TODO |
-| YOLOv8s | 640 | TODO | TODO | TODO | TODO |
+| Model | imgsz | Epochs | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|
+| YOLO11n | 640 | 50 | 0.434 | 0.234 |
 
-Failure slices (`detection/evaluate.py`): night, rainy, small-objects - TODO. Per-class AP: TODO.
+Precision: **0.569**; recall: **0.409**.
+
+| Class | Train boxes | AP50-95 |
+|---|---:|---:|
+| Car | 103,386 | 0.415 |
+| Truck | 4,100 | 0.369 |
+| Bus | 1,595 | 0.341 |
+| Motorcycle | 427 | 0.109 |
+| Bicycle | 1,012 | 0.142 |
+| Person | 13,574 | 0.208 |
+| Rider | 627 | 0.117 |
+| Traffic light | 26,942 | 0.163 |
+| Traffic sign | 34,587 | 0.247 |
+
+Failure analysis — **Measured:** motorcycle, rider, bicycle, and traffic light have the weakest
+per-class AP; motorcycle, rider, and bicycle are the three rarest classes by training-box count
+and also have the three lowest AP values. Truck and bus score relatively well despite low training
+counts, while traffic light has a comparatively high count but weak AP. **Hypothesis to test:**
+small traffic-light objects may contribute to its weak AP; object size was not measured in this
+evaluation, so this is not an established cause.
+
+Limitation: the same 2,000 validation images were used to select `best.pt` and report these
+metrics, so the results are slightly optimistic. No separate test split was used.
 
 ## 4. Tracking - TODO
 | Detector | Tracker | MOTA | IDF1 | ID switches |
