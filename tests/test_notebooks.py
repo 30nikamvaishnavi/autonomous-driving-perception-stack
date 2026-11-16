@@ -23,6 +23,14 @@ def test_notebook_cloud_bootstrap(notebook_path: Path) -> None:
     notebook = nbformat.read(notebook_path, as_version=4)
     nbformat.validate(notebook)
 
+    if notebook_path.name.startswith(("04_", "05_", "06_")):
+        assert notebook.cells[0].cell_type == "markdown"
+        for cell in notebook.cells:
+            if cell.cell_type == "code":
+                assert cell.execution_count is None
+                assert cell.outputs == []
+        return
+
     assert len(notebook.cells) >= 2
     parameters, bootstrap = notebook.cells[:2]
     assert parameters.cell_type == "code"

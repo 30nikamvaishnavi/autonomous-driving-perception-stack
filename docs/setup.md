@@ -19,19 +19,34 @@ pip install onnxruntime-directml   # optional: use the AMD iGPU for the ONNX ben
 wandb login
 ```
 
-## 2. Data (BDD100K 10K subset)
-1. Register at https://bdd-data.berkeley.edu and download *10K Images*, *Detection 2020 Labels* (`det_20`) and *Drivable Area* masks.
-2. Layout:
+## 2. Data (Kaggle BDD100K subset)
+The private Kaggle dataset `bdd100k-adpstack-subset` was made on Kaggle from the public BDD100K release
+(10K Images and Detection 2020 `det_20` labels). The subset builder samples 10,000 available training
+images and 2,000 validation images with seed 42, copies their images and labels, and normalizes the
+category aliases `bike` to `bicycle` and `motor` to `motorcycle`.
+
+To reproduce the subset from a BDD100K root that has the layout below:
+```powershell
+python scripts/make_bdd_subset.py --source data/bdd100k --out data/bdd100k-adpstack-subset
+```
+
+Attach the resulting folder as a Kaggle dataset named `bdd100k-adpstack-subset`. Enable a GPU
+accelerator and Internet in the Kaggle notebook settings. Set the Kaggle secret `WANDB_API_KEY`
+only if you want online W&B logging; the training notebook runs without it.
+
+Expected input layout before building the subset:
 ```
 data/bdd100k/images/{train,val}/*.jpg
 data/bdd100k/labels/det_20/det_{train,val}.json
-data/bdd100k/drivable_masks/{train,val}/*.png     # for the segmentation model
 ```
-3. Convert + EDA:
+Convert + EDA:
 ```powershell
 python -m adpstack.data.bdd100k_to_yolo --subset 10000
 python -m adpstack.data.eda --labels data/bdd100k/labels/det_20/det_train.json --out docs/figures --wandb
 ```
+The Kaggle run uses YOLO11n at 640 pixels, batch 16, and 50 epochs on a T4. The measured
+one-epoch duration was 0.031 hours; the full run is still in progress. This timing is setup
+information, not an accuracy result.
 CARLA synthetic frames (second domain) come from `carla_recorder` on the VM (section 5).
 
 ## 3. Colab (training) - use `notebooks/02_yolo_train_colab.ipynb`

@@ -14,16 +14,34 @@ Note: the closed-loop numbers come from a kinematic simulation (pinhole distance
 8 m/s^2 max braking). They validate the control/TTC logic only, not perception accuracy and not CARLA behaviour.
 Figure: `docs/figures/closed_loop_sim.png`. Preview frame: `docs/figures/synthetic_demo_frame.jpg`.
 
-## 2. Dataset (BDD100K 10K) - TODO after `eda`
-| Item | Value |
+## 2. Dataset (BDD100K Kaggle subset)
+Measured box counts for the 10,000-image training and 2,000-image validation subsets:
+
+| Class | Train boxes | Validation boxes |
+|---|---:|---:|
+| Car | 103,386 | 20,375 |
+| Traffic sign | 34,587 | 6,989 |
+| Traffic light | 26,942 | 5,466 |
+| Person | 13,574 | 2,500 |
+| Truck | 4,100 | 866 |
+| Bus | 1,595 | 311 |
+| Bicycle | 1,012 | 178 |
+| Rider | 627 | 136 |
+| Motorcycle | 427 | 100 |
+
+Train car-to-motorcycle imbalance ratio: **242.12:1** (103,386 / 427). Mitigation to evaluate
+in a later training comparison: class weights, mosaic/mixup augmentation, and minority-class
+oversampling. These are proposed experiments, not measured improvements.
+
+| Other dataset statistic | Value |
 |---|---|
-| Frames / boxes | TODO |
-| Class counts (car ... traffic sign) | TODO (see `docs/figures/eda_summary.json`) |
-| Imbalance ratio (max/min class) | TODO |
 | Small objects (<32^2 px) | TODO |
 | Night / rainy share | TODO |
 
-## 3. Detection (Colab T4) - TODO
+## 3. Detection (Kaggle T4) - full run in progress
+Measured training setup: YOLO11n, imgsz 640, batch 16; one epoch took 0.031 hours.
+The 50-epoch evaluation is pending. No smoke-test metrics are reported here as final results.
+
 | Model | imgsz | mAP50 | mAP50-95 | Precision | Recall |
 |---|---|---|---|---|---|
 | YOLO11n | 640 | TODO | TODO | TODO | TODO |
