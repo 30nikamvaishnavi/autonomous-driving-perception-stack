@@ -112,7 +112,26 @@ The repository exporter at `src/adpstack/export/to_tensorrt.py` is incompatible 
 it fails with `BuilderFlag has no attribute FP16`. This is a known issue; the Kaggle run used the
 Ultralytics exporter. Latency values are end-to-end and are not directly comparable with inference-only times.
 
-## 8. CARLA scenarios (cloud VM) - TODO (`outputs/scenarios/*.json`)
+## 8. Real-video pipeline timing
+
+Measured on a Kaggle Tesla T4 with YOLO11n `best.pt`, `--no-depth`, and a maximum of 300 frames per
+clip. Values are median per-stage latency in milliseconds; they exclude video decoding and drawing.
+
+| Pexels video | Input size | Frames | Detect (ms) | Track (ms) | Lane (ms) | Fusion (ms) |
+|---|---:|---:|---:|---:|---:|---:|
+| 3602494 | 1920x1080 | 300 | 12.7 | 0.8 | 74.1 | 0.48 |
+| 3978374 | 1920x1080 | 213 | 12.7 | 0.7 | 78.4 | 0.31 |
+| 14966361 | 2560x1440 output | 300 | 12.9 | 0.5 | 135.6 | 0.05 |
+| 4608285 | 3840x2160 | 300 | 13.5 | 0.9 | 258.4 | 0.46 |
+| 5921059 | 3840x2160 | 300 | 13.5 | 1.3 | 255.9 | 0.34 |
+
+The classical lane detector dominates the measured pipeline latency, and its latency grows
+substantially with input resolution. Distances use the pinhole prior with camera intrinsics from
+`configs/depth.yaml`, which assumes 1280x720; therefore, these distances are illustrative, not
+calibrated. There is no ground truth for tracking, lanes, or distance on these clips, so no accuracy
+claims are made for those outputs.
+
+## 9. CARLA scenarios (cloud VM) - TODO (`outputs/scenarios/*.json`)
 | Scenario | Collisions | Min distance (m) | Reaction time (s) | E2E latency mean / p95 (ms) |
 |---|---|---|---|---|
 | pedestrian_crossing | TODO | TODO | TODO | TODO |
@@ -120,7 +139,7 @@ Ultralytics exporter. Latency values are end-to-end and are not directly compara
 | cut_in | TODO | TODO | TODO | TODO |
 | night_rain | TODO | TODO | TODO | TODO |
 
-## 9. Honest limitations
+## 10. Honest limitations
 - TensorRT and CARLA run on a cloud NVIDIA T4 because the development laptop has only an AMD integrated GPU.
 - MiDaS is monocular: scale is calibrated on CARLA; transfer to real footage is approximate.
 - Controller is a research prototype (no map, no planning), not a safety system.

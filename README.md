@@ -15,11 +15,12 @@ benchmarks run on Kaggle/Colab GPU sessions.
 | BDD100K 10,000-image train / 2,000-image validation subset and EDA | **Done** |
 | YOLO11n training | **Done** - mAP50 **0.434**, mAP50-95 **0.234** |
 | TensorRT FP16/INT8 benchmark on Kaggle Tesla T4 | **Done** - FP16 231.6 FPS, INT8 226.0 FPS |
+| Real-video pipeline demo | **Done (qualitative)** |
 | ByteTrack tracking | **Code and unit tests done**; no real tracking-data evaluation yet |
 | Classical lane detection | **Code and tests done**; no real-image numbers yet |
 | U-Net lane model and comparison | **Not trained** |
 | MiDaS distance and TTC/risk fusion | **Code and calibration functions done**; no real error numbers yet |
-| CARLA + ROS2 implementation | **Implemented but not run** |
+| CARLA + ROS2 | **Not run** |
 | W&B logging | **Wired**; Kaggle-run delivery to a W&B account still needs confirmation |
 | Obstacle-reaction demo video | **Not done**; requires CARLA |
 | 10-minute presentation and reflection | **Outline and template only** |
@@ -133,6 +134,16 @@ Limitations:
 
 Full results and ongoing TODO items are in [`docs/results.md`](docs/results.md).
 
+## Credits
+
+The following Pexels videos were used only to demonstrate the perception pipeline:
+
+- [Video 3602494](https://www.pexels.com/video/footage-of-a-vehicle-traveling-in-the-road-3602494/) by Sher Lyn .
+- [Video 3978374](https://www.pexels.com/video/motor-vehicles-driving-on-the-road-3978374/) by K
+- [Video 14966361](https://www.pexels.com/video/driving-on-the-street-on-new-year-s-eve-14966361/) by Matthias Groeneveld
+- [Video 4608285](https://www.pexels.com/video/vehicle-on-highway-with-dash-cam-4608285/) by K
+- [Video 5921059](https://www.pexels.com/video/dash-cam-view-of-the-road-5921059/) by Aleks Magnusson
+
 ## Mapping to the internship brief
 
 | Item | Deliverable | Status |
@@ -143,7 +154,7 @@ Full results and ongoing TODO items are in [`docs/results.md`](docs/results.md).
 | 3. Classical lane detection | Classical OpenCV lane code and tests | **Partial** - no real-image numbers |
 | 3. Segmentation model and comparison | Segmentation implementation/training path | **Not done** - model not trained |
 | 4. MiDaS distance | MiDaS and calibration functions | **Partial** - no real error numbers |
-| 5. CARLA + ROS2 | CARLA bridge, perception/control nodes, scenarios | **Partial** - code written, never run |
+| 5. CARLA + ROS2 | CARLA bridge, perception/control nodes, scenarios | **Not run** |
 | 6. ONNX and TensorRT benchmark | ONNX export and FP16/INT8 benchmark | **Done** - 2.31x FP16 speed-up |
 | 7. W&B logging | Notebook/logging integration | **Partial** - confirm Kaggle runs appear in your W&B account |
 | 7. Obstacle-reaction demo video | Recorded CARLA reaction demo | **Not done** - requires CARLA |
