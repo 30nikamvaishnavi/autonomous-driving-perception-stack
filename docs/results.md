@@ -91,18 +91,26 @@ Qualitative failure analysis (`docs/figures/lane_qualitative.png`): write 4-5 se
 | Pinhole + class height prior | TODO | TODO | TODO | TODO |
 | Fused (50/50) | TODO | TODO | TODO | TODO |
 
-## 7. ONNX / TensorRT benchmark - TODO (state the GPU)
-Produced by `python -m adpstack.export.benchmark ...` (500 iterations, 50 warm-up).
-| Backend | mean ms | p95 ms | FPS | speed-up |
-|---|---|---|---|---|
-| PyTorch FP32 (CPU) | TODO | TODO | TODO | 1.0x |
-| ONNX Runtime (CPU) | TODO | TODO | TODO | TODO |
-| PyTorch FP32 (T4) | TODO | TODO | TODO | TODO |
-| ONNX Runtime CUDA (T4) | TODO | TODO | TODO | TODO |
-| TensorRT FP16 (T4) | TODO | TODO | TODO | TODO |
-| TensorRT INT8 (T4) | TODO | TODO | TODO | TODO |
+## 7. ONNX / TensorRT benchmark
+Measured on Kaggle with a Tesla T4, YOLO11n `best.pt`, TensorRT 11.5.0.63, and Ultralytics 8.4.215.
+Latency is end-to-end Ultralytics `predict()` including pre/postprocessing on a 1280x720 image, batch 1,
+with 300 iterations after 30 warm-up iterations. Accuracy was measured on 2,000 val images.
 
-INT8 mAP50-95 drop vs FP32: TODO.
+| Backend | mean ms | p50 | p95 | p99 | FPS | speed-up | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| PyTorch FP32 (CUDA) | 9.96 | 9.85 | 10.44 | 11.41 | 100.4 | 1.00x | 0.434 | 0.234 |
+| TensorRT FP16 | 4.32 | 4.17 | 4.88 | 5.68 | 231.6 | 2.31x | 0.433 | 0.232 |
+| TensorRT INT8 | 4.42 | 4.19 | 5.85 | 5.92 | 226.0 | 2.25x | 0.414 | 0.221 |
+
+Ultralytics' own inference-only times were 9.5 ms for PyTorch, 2.9 ms for FP16, and 3.0 ms for INT8.
+ONNX export size was 10.2 MB. The FP16 engine was 55 MB and built in 157 s; the INT8 engine was 43 MB
+and built in 198 s.
+
+Notes: TensorRT INT8 was not faster than FP16 on this run and lost 0.020 mAP50 versus FP32.
+INT8 calibration used 300 val images from the same 2,000-image val pool used for evaluation.
+The repository exporter at `src/adpstack/export/to_tensorrt.py` is incompatible with TensorRT 11.5:
+it fails with `BuilderFlag has no attribute FP16`. This is a known issue; the Kaggle run used the
+Ultralytics exporter. Latency values are end-to-end and are not directly comparable with inference-only times.
 
 ## 8. CARLA scenarios (cloud VM) - TODO (`outputs/scenarios/*.json`)
 | Scenario | Collisions | Min distance (m) | Reaction time (s) | E2E latency mean / p95 (ms) |

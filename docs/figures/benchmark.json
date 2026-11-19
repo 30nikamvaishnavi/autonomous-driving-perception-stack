@@ -1,0 +1,56 @@
+{
+  "hardware": "Kaggle Tesla T4",
+  "model": "YOLO11n best.pt",
+  "tensorrt_version": "11.5.0.63",
+  "ultralytics_version": "8.4.215",
+  "method": "End-to-end Ultralytics predict() latency including pre/postprocess on a 1280x720 image, batch 1, 300 iterations after 30 warm-up iterations",
+  "evaluation_images": 2000,
+  "results": [
+    {
+      "backend": "PyTorch FP32 (CUDA)",
+      "mean_ms": 9.96,
+      "p50_ms": 9.85,
+      "p95_ms": 10.44,
+      "p99_ms": 11.41,
+      "fps": 100.4,
+      "speedup": 1.00,
+      "map50": 0.434,
+      "map50_95": 0.234
+    },
+    {
+      "backend": "TensorRT FP16",
+      "mean_ms": 4.32,
+      "p50_ms": 4.17,
+      "p95_ms": 4.88,
+      "p99_ms": 5.68,
+      "fps": 231.6,
+      "speedup": 2.31,
+      "map50": 0.433,
+      "map50_95": 0.232
+    },
+    {
+      "backend": "TensorRT INT8",
+      "mean_ms": 4.42,
+      "p50_ms": 4.19,
+      "p95_ms": 5.85,
+      "p99_ms": 5.92,
+      "fps": 226.0,
+      "speedup": 2.25,
+      "map50": 0.414,
+      "map50_95": 0.221
+    }
+  ],
+  "ultralytics_inference_only_ms": {
+    "PyTorch FP32": 9.5,
+    "TensorRT FP16": 2.9,
+    "TensorRT INT8": 3.0
+  },
+  "artifacts": {
+    "onnx_size_mb": 10.2,
+    "fp16_engine_size_mb": 55,
+    "fp16_build_seconds": 157,
+    "int8_engine_size_mb": 43,
+    "int8_build_seconds": 198,
+    "int8_calibration_images": 300
+  }
+}

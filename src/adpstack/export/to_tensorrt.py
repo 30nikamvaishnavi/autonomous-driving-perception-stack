@@ -13,6 +13,9 @@ import numpy as np
 
 from adpstack.utils.logging import get_logger
 
+# NOTE: This module targets the TensorRT 8-10 API.
+# The Kaggle TensorRT 11.5 benchmark used the Ultralytics exporter instead.
+
 log = get_logger(__name__)
 
 
