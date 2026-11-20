@@ -151,6 +151,8 @@ Measured on a Kaggle Tesla T4 with TensorRT 11.5.0.63 and Ultralytics 8.4.215. L
 | TensorRT FP16 | 4.32 | 4.17 | 4.88 | 5.68 | 231.6 | 2.31x | 0.433 | 0.232 |
 | TensorRT INT8 | 4.42 | 4.19 | 5.85 | 5.92 | 226.0 | 2.25x | 0.414 | 0.221 |
 
+Ultralytics inference-only times were 9.5 ms for PyTorch, 2.9 ms for FP16, and 3.0 ms for INT8. The ONNX export was 10.2 MB; the FP16 engine was 55 MB and took 157 s to build; the INT8 engine was 43 MB and took 198 s to build. INT8 calibration used 300 validation images. In this run INT8 was not faster than FP16 and had lower mAP50 than FP32.
+
 ### Real-video pipeline timing
 
 Measured on a Kaggle Tesla T4 with YOLO11n `best.pt`, `--no-depth`, and at most 300 frames per clip. Values are median per-stage latency in milliseconds; video decoding and drawing are excluded.

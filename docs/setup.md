@@ -16,8 +16,9 @@ pytest                             # CPU tests, no data needed
 python scripts/synthetic_demo.py   # model-free demo -> outputs/synthetic_demo.mp4
 pip install -e ".[ml,export]"      # PyTorch (CPU), ultralytics, ONNX (optional locally)
 pip install onnxruntime-directml   # optional: use the AMD iGPU for the ONNX benchmark row
-wandb login
 ```
+
+Online W&B tracking was not completed because authentication failed on a hosted W&B instance. Training metrics are available in `docs/figures/results.csv` and `docs/figures/training_curves.png`.
 
 ## 2. Data (Kaggle BDD100K subset)
 The private Kaggle dataset `bdd100k-adpstack-subset` was made on Kaggle from the public BDD100K release
@@ -44,14 +45,13 @@ Convert + EDA:
 python -m adpstack.data.bdd100k_to_yolo --subset 10000
 python -m adpstack.data.eda --labels data/bdd100k/labels/det_20/det_train.json --out docs/figures --wandb
 ```
-The Kaggle run uses YOLO11n at 640 pixels, batch 16, and 50 epochs on a T4. The measured
-one-epoch duration was 0.031 hours; the full run is still in progress. This timing is setup
-information, not an accuracy result.
+The completed Kaggle run used YOLO11n at 640 pixels, batch 16, and 50 epochs on a T4. Total
+training time was 4,571.65 seconds (about 76 minutes).
 CARLA synthetic frames (second domain) come from `carla_recorder` on the VM (section 5).
 
 ## 3. Colab (training) - use `notebooks/02_yolo_train_colab.ipynb`
 Upload the converted data to Drive, run the notebook, save `best.pt` to Drive.
-Segmentation: `python -m adpstack.lane.segmentation train --images <imgs> --masks <masks> --epochs 20`.
+U-Net lane model training was not run; no trained U-Net checkpoint or evaluation results are available.
 
 ## 4. TensorRT on Colab T4 - `notebooks/03_tensorrt_colab.ipynb`
 Produces `docs/figures/benchmark.{md,json,png}` with PyTorch / ONNX Runtime / TRT FP16 / TRT INT8 latency + FPS.

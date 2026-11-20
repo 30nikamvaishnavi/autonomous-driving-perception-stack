@@ -43,4 +43,5 @@ Precision: **0.569**; recall: **0.409**.
 
 Train YOLO11n for 50 epochs at imgsz 640 and batch 16, keeping the other training settings
 unchanged, but sample each training image containing motorcycle, rider, or bicycle objects three
-times as often as under the current image sampling scheme. T4 runtime/cost: **to be measured**.
+times as often as under the current image sampling scheme. **Not run:** no resampling comparison or
+runtime/cost measurement is available.

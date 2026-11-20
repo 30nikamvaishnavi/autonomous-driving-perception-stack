@@ -122,7 +122,7 @@ ONNX export size was 10.2 MB. The FP16 engine was 55 MB and built in 157 s; the 
 and built in 198 s.
 
 Notes: TensorRT INT8 was not faster than FP16 on this run and lost 0.020 mAP50 versus FP32.
-INT8 calibration used 300 val images from the same 2,000-image val pool used for evaluation.
+INT8 calibration used 300 validation images from the same 2,000-image validation pool used for evaluation.
 The repository exporter at `src/adpstack/export/to_tensorrt.py` is incompatible with TensorRT 11.5:
 it fails with `BuilderFlag has no attribute FP16`. This is a known issue; the Kaggle run used the
 Ultralytics exporter. Latency values are end-to-end and are not directly comparable with inference-only times.
@@ -157,6 +157,6 @@ claims are made for those outputs.
 CARLA scenario evaluation was not run because CARLA + ROS2 was not run.
 
 ## 11. Honest limitations
-- TensorRT and CARLA run on a cloud NVIDIA T4 because the development laptop has only an AMD integrated GPU.
-- MiDaS is monocular: scale is calibrated on CARLA; transfer to real footage is approximate.
+- TensorRT benchmarking ran on a Kaggle Tesla T4. CARLA was not run.
+- MiDaS is monocular; distance-error evaluation and calibration against CARLA depth were not run.
 - Controller is a research prototype (no map, no planning), not a safety system.

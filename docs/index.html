@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Autonomous Driving Perception Stack: Results</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14171c;--mu:#5b6573;--bd:#e1e5ea;--ac:#2a6fdb;--ok:#1b8a5a;--wa:#b7791f;--bar:#2a6fdb;--bar2:#9db8e8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--card:#171c23;--tx:#e8ecf1;--mu:#98a3b3;--bd:#27303b;--ac:#6ea1f5;--ok:#4cc38a;--wa:#e0b25a;--bar:#6ea1f5;--bar2:#34507f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1318;--card:#171c23;--tx:#e8ecf1;--mu:#98a3b3;--bd:#27303b;--ac:#6ea1f5;--ok:#4cc38a;--wa:#e0b25a;--bar:#6ea1f5;--bar2:#34507f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:8px 0 4px}h2{font-size:17px;margin:0 0 10px}
+.sub{color:var(--mu);margin:0 0 18px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.big{font-size:28px;font-weight:650;letter-spacing:-.5px}.lab{color:var(--mu);font-size:13px}
+.sec{margin-top:14px}
+.row{display:grid;grid-template-columns:110px 1fr 48px;gap:8px;align-items:center;margin:5px 0;font-size:14px}
+.track{height:12px;background:var(--bd);border-radius:6px;overflow:hidden}.fill{height:100%;background:var(--bar);border-radius:6px}
+.fill.rare{background:var(--wa)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}
+th{color:var(--mu);font-weight:600}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;border:1px solid var(--bd);color:var(--mu)}
+.pill.ok{color:var(--ok);border-color:var(--ok)}.pill.wa{color:var(--wa);border-color:var(--wa)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.flow span.n{padding:6px 11px;border:1px solid var(--bd);border-radius:8px;background:var(--card);font-size:13px}.flow i{color:var(--mu);font-style:normal}
+.note{color:var(--mu);font-size:13px;margin-top:8px}
+ul{margin:6px 0 0 18px;padding:0}li{margin:3px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Autonomous Driving Perception Stack</h1>
+<p class="sub">Measured results from the project repository. Every number below comes from a run, never an estimate.</p>
+
+<div class="grid">
+<div class="card"><div class="lab">Detection mAP50</div><div class="big">0.434</div><div class="lab">YOLO11n, 2,000 val images</div></div>
+<div class="card"><div class="lab">Detection mAP50-95</div><div class="big">0.234</div><div class="lab">precision 0.569 · recall 0.409</div></div>
+<div class="card"><div class="lab">TensorRT FP16 speed-up</div><div class="big">2.31×</div><div class="lab">231.6 FPS vs 100.4 FPS, Tesla T4</div></div>
+</div>
+
+<div class="card sec"><h2>Pipeline</h2>
+<div class="flow"><span class="n">Camera frame</span><i>→</i><span class="n">YOLO detector</span><i>→</i><span class="n">ByteTrack</span><i>→</i><span class="n">Distance (MiDaS + pinhole)</span><i>→</i><span class="n">TTC + risk</span><i>→</i><span class="n">AEB / ACC / lane keeping</span></div>
+<div class="flow" style="margin-top:8px"><span class="n">Lane: OpenCV classical</span><i>and</i><span class="n">Lane: U-Net (planned)</span></div>
+</div>
+
+<div class="card sec"><h2>Detection: AP50-95 per class</h2>
+<div id="cls"></div>
+<p class="note">Orange bars are the three rarest classes in the training subset. Train box counts: car 103,386 · traffic sign 34,587 · traffic light 26,942 · person 13,574 · truck 4,100 · bus 1,595 · bicycle 1,012 · rider 627 · motorcycle 427 (ratio 242 : 1). The same 2,000 val images chose best.pt and produce these numbers, so they are slightly optimistic.</p>
+</div>
+
+<div class="card sec"><h2>TensorRT benchmark (Tesla T4, batch 1)</h2>
+<div class="scroll"><table>
+<tr><th>Backend</th><th>mean ms</th><th>p95 ms</th><th>FPS</th><th>speed-up</th><th>mAP50</th><th>mAP50-95</th></tr>
+<tr><td>PyTorch FP32 (CUDA)</td><td>9.96</td><td>10.44</td><td>100.4</td><td>1.00×</td><td>0.434</td><td>0.234</td></tr>
+<tr><td>TensorRT FP16</td><td>4.32</td><td>4.88</td><td>231.6</td><td>2.31×</td><td>0.433</td><td>0.232</td></tr>
+<tr><td>TensorRT INT8</td><td>4.42</td><td>5.85</td><td>226.0</td><td>2.25×</td><td>0.414</td><td>0.221</td></tr>
+</table></div>
+<p class="note">End-to-end predict() latency including pre- and post-processing, 1280×720 image, 300 iterations after 30 warm-up. INT8 was no faster than FP16 here and lost 0.020 mAP50; it was calibrated on 300 images from the evaluation pool.</p>
+</div>
+
+<div class="card sec"><h2>Emergency braking logic (kinematic simulation, not CARLA)</h2>
+<div class="scroll"><table>
+<tr><th>Scenario (20 noisy runs)</th><th>Braking</th><th>Collision rate</th><th>Min gap (m)</th><th>Impact (m/s)</th></tr>
+<tr><td>Stationary obstacle at 60 m, ego 14 m/s</td><td>off</td><td>100%</td><td>0.0</td><td>7.8</td></tr>
+<tr><td>Stationary obstacle at 60 m, ego 14 m/s</td><td>AEB on</td><td>0%</td><td>4.7</td><td>0.0</td></tr>
+<tr><td>Slow lead car (5 m/s) at 45 m</td><td>off</td><td>100%</td><td>0.0</td><td>7.9</td></tr>
+<tr><td>Slow lead car (5 m/s) at 45 m</td><td>AEB on</td><td>0%</td><td>10.3</td><td>0.0</td></tr>
+</table></div>
+<p class="note">Pinhole distance with 1.5 px noise, 0.1 s actuation delay and 8 m/s² braking. It checks the control logic only, not perception accuracy.</p>
+</div>
+
+<div class="card sec"><h2>Status</h2>
+<ul>
+<li><span class="pill ok">done</span> BDD100K 10K subset, EDA, YOLO11n training, evaluation</li>
+<li><span class="pill ok">done</span> ONNX export and TensorRT FP16/INT8 benchmark; Ultralytics exporter used for TensorRT</li>
+<li><span class="pill ok">done</span> ByteTrack, lanes (classical), distance/TTC/risk, controller: unit tested</li>
+<li><span class="pill wa">written, not run</span> CARLA bridge and ROS2 nodes</li>
+<li><span class="pill wa">not measured / not done</span> tracking accuracy, U-Net lane model, MiDaS distance error</li>
+<li><span class="pill wa">partial</span> W&amp;B online tracking did not complete because of authentication failure on a hosted instance</li>
+<li>Real-video pipeline demo exists; it is qualitative and includes the failure cases shown in the repository screenshots.</li>
+</ul></div>
+</main>
+<script>
+var d=[["car",0.415],["truck",0.369],["bus",0.341],["traffic sign",0.247],["person",0.208],["traffic light",0.163],["bicycle",0.142],["rider",0.117],["motorcycle",0.109]];
+var rare={"bicycle":1,"rider":1,"motorcycle":1},h="";
+for(var i=0;i<d.length;i++){h+='<div class="row"><span>'+d[i][0]+'</span><div class="track"><div class="fill'+(rare[d[i][0]]?' rare':'')+'" style="width:'+(d[i][1]/0.45*100)+'%"></div></div><span class="num">'+d[i][1].toFixed(3)+'</span></div>';}
+document.getElementById("cls").innerHTML=h;
+</script>
+</body>
+</html>
