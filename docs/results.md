@@ -1,7 +1,7 @@
 # Results
 
-> Rule for this file: **only measured numbers.** Rows marked `TODO` need a GPU run; the command to produce each is given.
-> Hardware for every table must be stated. Fill in from `docs/figures/*.json` and W&B.
+> Rule for this file: **only measured numbers.** Unrun evaluations are labeled `Not run`.
+> Hardware is stated for measured GPU results. Online W&B tracking was not completed because authentication failed on a hosted W&B instance; metrics are in `docs/figures/results.csv` and `docs/figures/training_curves.png`.
 
 ## 1. Verified in this repository (CPU, reproducible)
 | Check | Result | Command |
@@ -35,16 +35,27 @@ oversampling. These are proposed experiments, not measured improvements.
 
 | Other dataset statistic | Value |
 |---|---|
-| Small objects (<32^2 px) | TODO |
-| Night / rainy share | TODO |
+| Small objects (<32^2 px) | Not run |
+| Night / rainy share | Not run |
 
-## 3. Detection (Kaggle Tesla T4)
+Small-object and night/rainy share analyses were not run because BDD100K is not included in this repository.
+
+## 3. YOLO11n training (Kaggle Tesla T4)
+
+The 50-epoch run took **4,571.65 s** (about 76 minutes). The highest validation mAP50-95 in `docs/figures/results.csv` was at epoch 39. The final row is epoch 50.
+
+| Epoch | mAP50 | mAP50-95 |
+|---:|---:|---:|
+| 39 (best validation mAP50-95) | 0.43376 | 0.23392 |
+| 50 (last) | 0.42950 | 0.23294 |
+
+Training losses continued to fall while validation mAP stayed roughly flat after about epoch 39. This is a **possible sign of overfitting, not a proven conclusion**.
+
+## 4. Detection (Kaggle Tesla T4)
 Measured setup: YOLO11n, imgsz 640, batch 16, 50 epochs; 10,000 training and 2,000
 validation images from the private BDD100K subset.
 
-| Model | imgsz | Epochs | mAP50 | mAP50-95 |
-|---|---:|---:|---:|---:|
-| YOLO11n | 640 | 50 | 0.434 | 0.234 |
+The separate `best.pt` evaluation in `docs/figures/detection_eval.json` reports mAP50 **0.43375369780511985**, mAP50-95 **0.23445463247137935**, precision **0.5685970913216417**, and recall **0.4086158581282986**. These checkpoint-evaluation metrics differ from the epoch-39 validation values above.
 
 Precision: **0.569**; recall: **0.409**.
 
@@ -70,28 +81,32 @@ evaluation, so this is not an established cause.
 Limitation: the same 2,000 validation images were used to select `best.pt` and report these
 metrics, so the results are slightly optimistic. No separate test split was used.
 
-## 4. Tracking - TODO
+## 5. Tracking
 | Detector | Tracker | MOTA | IDF1 | ID switches |
 |---|---|---|---|---|
-| YOLO11n | ByteTrack (default) | TODO | TODO | TODO |
-| YOLO11n | ByteTrack (buffer 60) | TODO | TODO | TODO |
+| YOLO11n | ByteTrack (default) | Not run | Not run | Not run |
+| YOLO11n | ByteTrack (buffer 60) | Not run | Not run | Not run |
 
-## 5. Lane detection - TODO
+Tracking accuracy evaluation was not run because no real tracking-data evaluation or ground-truth comparison was completed.
+
+## 6. Lane detection
 | Method | IoU (ego lane) | F1 | FPS (CPU) | FPS (T4) |
 |---|---|---|---|---|
-| Classical (OpenCV) | TODO | TODO | TODO | n/a |
-| U-Net + MobileNetV2 | TODO | TODO | TODO | TODO |
+| Classical (OpenCV) | Not run | Not run | Not run | Not run |
+| U-Net + MobileNetV2 | Not run | Not run | Not run | Not run |
 
-Qualitative failure analysis (`docs/figures/lane_qualitative.png`): write 4-5 sentences on night, rain glare, worn paint, curves, occlusion.
+Lane metrics were not run because no labeled lane-ground-truth evaluation was completed. U-Net training/evaluation was not run. The real-video examples show lane-overlay failures; see the screenshots in the README.
 
-## 6. Depth / distance - TODO (needs CARLA depth pairs)
+## 7. Depth / distance
 | Method | MAE (m) | RMSE (m) | AbsRel | delta<1.25 |
 |---|---|---|---|---|
-| MiDaS_small + scale/shift fit | TODO | TODO | TODO | TODO |
-| Pinhole + class height prior | TODO | TODO | TODO | TODO |
-| Fused (50/50) | TODO | TODO | TODO | TODO |
+| MiDaS_small + scale/shift fit | Not run | Not run | Not run | Not run |
+| Pinhole + class height prior | Not run | Not run | Not run | Not run |
+| Fused (50/50) | Not run | Not run | Not run | Not run |
 
-## 7. ONNX / TensorRT benchmark
+Distance-error evaluation was not run because paired CARLA depth ground truth is unavailable; CARLA was not run.
+
+## 8. ONNX / TensorRT benchmark
 Measured on Kaggle with a Tesla T4, YOLO11n `best.pt`, TensorRT 11.5.0.63, and Ultralytics 8.4.215.
 Latency is end-to-end Ultralytics `predict()` including pre/postprocessing on a 1280x720 image, batch 1,
 with 300 iterations after 30 warm-up iterations. Accuracy was measured on 2,000 val images.
@@ -112,7 +127,7 @@ The repository exporter at `src/adpstack/export/to_tensorrt.py` is incompatible 
 it fails with `BuilderFlag has no attribute FP16`. This is a known issue; the Kaggle run used the
 Ultralytics exporter. Latency values are end-to-end and are not directly comparable with inference-only times.
 
-## 8. Real-video pipeline timing
+## 9. Real-video pipeline timing
 
 Measured on a Kaggle Tesla T4 with YOLO11n `best.pt`, `--no-depth`, and a maximum of 300 frames per
 clip. Values are median per-stage latency in milliseconds; they exclude video decoding and drawing.
@@ -131,15 +146,17 @@ substantially with input resolution. Distances use the pinhole prior with camera
 calibrated. There is no ground truth for tracking, lanes, or distance on these clips, so no accuracy
 claims are made for those outputs.
 
-## 9. CARLA scenarios (cloud VM) - TODO (`outputs/scenarios/*.json`)
+## 10. CARLA scenarios (cloud VM)
 | Scenario | Collisions | Min distance (m) | Reaction time (s) | E2E latency mean / p95 (ms) |
 |---|---|---|---|---|
-| pedestrian_crossing | TODO | TODO | TODO | TODO |
-| lead_braking | TODO | TODO | TODO | TODO |
-| cut_in | TODO | TODO | TODO | TODO |
-| night_rain | TODO | TODO | TODO | TODO |
+| pedestrian_crossing | Not run | Not run | Not run | Not run |
+| lead_braking | Not run | Not run | Not run | Not run |
+| cut_in | Not run | Not run | Not run | Not run |
+| night_rain | Not run | Not run | Not run | Not run |
 
-## 10. Honest limitations
+CARLA scenario evaluation was not run because CARLA + ROS2 was not run.
+
+## 11. Honest limitations
 - TensorRT and CARLA run on a cloud NVIDIA T4 because the development laptop has only an AMD integrated GPU.
 - MiDaS is monocular: scale is calibrated on CARLA; transfer to real footage is approximate.
 - Controller is a research prototype (no map, no planning), not a safety system.
