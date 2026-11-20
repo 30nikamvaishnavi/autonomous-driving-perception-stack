@@ -6,7 +6,7 @@
 ## 1. Verified in this repository (CPU, reproducible)
 | Check | Result | Command |
 |---|---|---|
-| Unit tests | 30 / 30 passing (data conversion, EDA, ByteTrack, MOT metrics, lanes, depth calibration, TTC, risk, control, decoder, pipeline) | `pytest` |
+| Unit tests | 49 / 49 passing (data conversion, EDA, ByteTrack, MOT metrics, lanes, depth calibration, TTC, risk, control, decoder, pipeline) | `.\.venv\Scripts\python.exe -m pytest` |
 | Closed-loop AEB logic, stationary obstacle at 60 m, ego 14 m/s, 20 noisy runs | no AEB: 100 % collisions, 7.8 m/s mean impact. **AEB on: 0 % collisions, min gap 4.7 m** | `python scripts/closed_loop_sim.py` |
 | Closed-loop, slow lead car (5 m/s) at 45 m | no AEB: 100 % collisions, 7.9 m/s impact. **AEB on: 0 % collisions, min gap 10.3 m** | same |
 

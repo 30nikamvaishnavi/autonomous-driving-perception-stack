@@ -1,14 +1,16 @@
 # 10-minute presentation outline
 
-| Min | Slide | Content |
+| Time | Slide | Content and visuals |
 |---|---|---|
-| 0:00-1:00 | Problem | Perception is the first link of the autonomy chain; goal: detect, track, localize in lane, measure distance, and act - with measurable latency. |
-| 1:00-2:30 | Design | Architecture diagram (docs/architecture.md); dev laptop vs Colab vs GPU VM split; why ROS2 + CARLA. |
-| 2:30-4:00 | Data & detection | BDD100K 10K + CARLA synthetic; class imbalance and mitigations; mAP table; night/rain failure slices. |
-| 4:00-5:00 | Tracking & lanes | ByteTrack MOTA/IDF1; classical vs U-Net lane IoU/FPS with the qualitative grid. |
-| 5:00-6:00 | Depth & risk | MiDaS calibration, pinhole fusion, AbsRel; TTC -> risk -> AEB logic. |
-| 6:00-7:30 | Optimization | ONNX -> TensorRT FP16/INT8 before/after latency chart; INT8 accuracy drop. |
-| 7:30-9:00 | Live/recorded demo | CARLA pedestrian crossing: HUD with distance/TTC, braking; scenario metrics table. |
-| 9:00-10:00 | Challenges & next steps | Challenges: domain gap, depth scale, latency; Next: multi-camera/LiDAR fusion, learned planner, Jetson deployment, DeepSORT/ReID comparison. |
+| 0:00-0:45 | Project and scope | Introduce the research prototype: perception-to-control components, offline video, and a kinematic braking check. State up front that CARLA + ROS2 was not run. |
+| 0:45-1:45 | Architecture | Walk through detection, ByteTrack, lanes, depth/distance, TTC/risk, and control using [docs/architecture.md](docs/architecture.md). Distinguish implemented code from evaluations that were not run. |
+| 1:45-3:00 | Data and training | BDD100K subset: 10,000 training and 2,000 validation images. YOLO11n trained for 50 epochs on a Kaggle Tesla T4 in 4,571.65 s. Show [training_curves.png](docs/figures/training_curves.png): epoch 39 validation mAP50 0.43376 / mAP50-95 0.23392; epoch 50 0.4295 / 0.23294. Falling training loss with mostly flat validation mAP after about epoch 39 is a possible overfitting sign, not proven. |
+| 3:00-4:00 | Detection result | The separate `best.pt` evaluation on 2,000 validation images reported mAP50 0.43375, mAP50-95 0.23445, precision 0.56860, and recall 0.40862. Note that the same validation pool was used for checkpoint selection and evaluation. |
+| 4:00-5:15 | Failure analysis | Show [demo_daytime_frame.jpg](docs/figures/demo_daytime_frame.jpg) and [demo_night_frame.jpg](docs/figures/demo_night_frame.jpg). Day: incorrect lane overlay covers the dashboard; CRITICAL risk is a false alarm; distance/TTC use an uncalibrated pinhole prior. Night: lane overlay does not follow a visible lane and this frame has no detections. These are failure examples, not accuracy evidence. |
+| 5:15-6:00 | What is and is not evaluated | ByteTrack has code and unit tests, but no tracking accuracy numbers. Classical lane detection runs on real video, but has no accuracy numbers and fails on the shown clips. U-Net was not trained; MiDaS distance error was not measured. |
+| 6:00-7:15 | Inference benchmark | On the documented Kaggle Tesla T4 setup, PyTorch FP32 measured 100.4 FPS; TensorRT FP16 231.6 FPS (2.31x); TensorRT INT8 226.0 FPS (2.25x). INT8 was not faster than FP16 and had lower mAP50 than FP32. These are end-to-end predict() measurements. |
+| 7:15-8:15 | Braking logic simulation | Show [closed_loop_sim.png](docs/figures/closed_loop_sim.png). In the stationary-obstacle simulation, AEB off produced 100% collisions and 7.8 m/s mean impact; AEB on produced 0% collisions and a 4.7 m minimum gap. Explain that this is a kinematic simulation, not CARLA and not a perception-accuracy result. |
+| 8:15-9:00 | Reproducibility and tracking | Point to the CPU test command and the repository results files. State that online W&B tracking was not completed because authentication failed on a hosted instance; results are local in `docs/figures/results.csv` and `docs/figures/training_curves.png`. |
+| 9:00-10:00 | Gaps and next steps | **Gaps and next steps:** run CARLA + ROS2 scenarios; evaluate tracking and lanes against ground truth; train/evaluate U-Net; measure MiDaS distance error using paired CARLA depth; complete online W&B tracking after resolving authentication. These are proposed next steps, not completed results. |
 
-Rehearse to 9:30. Keep one slide per number table. Every claim must point to a file in the repo or a W&B run.
+Keep the limitations visible: the project is a research prototype, the screenshots include failures, and neither the kinematic simulation nor qualitative videos establish real-world safety.
